@@ -9,6 +9,7 @@ end=9
 win=0
 place = [10,10,10,10,10,10,10,10,10]
 pace = [1,10,20,30,40,50,60,70,80,90]
+tiles = [(-200,200),(0,200),(200,200),(-200,0),(0,0),(200,0),(-200,-200),(0,-200),(200,-200)]
 winner =0
 y=0
 def cross():
@@ -31,7 +32,6 @@ def turn():
     nought()
   else:
     cross()
-#  player*=-1
   
 
 t.shape('circle')
@@ -61,67 +61,21 @@ t.forward(600)
 t.penup()
 t.goto(0,0)
 t.speed(10)
-#cross()
-#t.setx(t.xcor()+200)
 
 def play():
   global pos
   global end
   global y
-  if pos == 1 and place[0]==10:
-    t.goto(-200,200)
+  global tiles
+  global place
+
+  coord_num = pos -1
+  if place[coord_num] == 10:
+    t.goto(tiles[coord_num])
     turn()
     t.goto(0,0)
-    place[0]=end%2
-    y+=1
-  elif pos == 2 and place[1]==10:
-    t.goto(0,200)
-    turn()
-    t.goto(0,0)
-    place[1]=end%2
-    y+=1
-  elif pos == 3 and place[2]==10:
-    t.goto(200,200)
-    turn()
-    t.goto(0,0)
-    place[2]=end%2
-    y+=1
-  elif pos == 4 and place[3] ==10:
-    t.goto(-200,0)
-    turn()
-    t.goto(0,0)
-    y+=1
-    place[3]=end%2
-  elif pos == 5 and place[4]==10:
-    t.goto(0,0)
-    turn()
-    t.goto(0,0)
-    y+=1
-    place[4]=end%2
-  elif pos == 6 and place[5]==10:
-    t.goto(200,0)
-    turn()
-    t.goto(0,0)
-    y+=1
-    place[5]=end%2
-  elif pos == 7 and place[6]==10:
-    t.goto(-200,-200)
-    turn()
-    t.goto(0,0)
-    y+=1
-    place[6]=end%2
-  elif pos == 8 and place[7] == 10:
-    t.goto(0,-200)
-    turn()
-    t.goto(0,0)
-    y+=1
-    place[7]=end%2
-  elif pos == 9 and place[8] ==10:
-    t.goto(200,-200)
-    turn()
-    t.goto(0,0)
-    y+=1
-    place[8]=end%2
+    place[coord_num] = end %2
+    y += 1
   else:
     print("Sorry, I can't do that. ")
     end+=1
@@ -131,16 +85,25 @@ def WinCheck():
   global winner
   global end
   
-  if sum(place[:3])==0 or sum(place[3:6])==0 or sum(place[7:9])==0:
+  # Player 1
+  if sum(place[:3])==0 or sum(place[3:6])==0 or sum(place[6:8])==0: # rows
     winner=2
     end=2
-  if place[0]+place[3]+place[6]==0 or place[1]+place[4]+place[7]==0  or place[2]+place[5]+place[8]==0 or place[0]+place[4]+place[8]==0 or place[2]+place[4]+place[6]==0:
+  if place[0]+place[3]+place[6]==0 or place[1]+place[4]+place[7]==0  or place[2]+place[5]+place[8]==0: # columns
     winner=2
     end=1
-  if sum(place[:3])==3 or sum(place[4:6])==3 or sum(place[7:9])==3:
+  if place[0] + place[4] + place[8] == 0 or place[2] + place[4] + place[7] == 0: # diagonals
+    winner=2
+    end=1
+
+  # Player 2
+  if sum(place[:3])==3 or sum(place[3:6])==3 or sum(place[6:8])==3: # rows
+    winner=1
+    end=2
+  if place[0]+place[3]+place[6] == 3 or place[1]+place[4]+place[7] == 3 or place[2]+place[5]+place[8] == 3: # columns
     winner=1
     end=1
-  if place[0]+place[3]+place[6]==3 or place[1]+place[4]+place[7]==3  or place[2]+place[5]+place[8]==3 or place[0]+place[4]+place[8]==3 or place[2]+place[4]+place[6]==3:
+  if place[0] + place[4] + place[8] == 3 or place[2] + place[4] + place[7] == 3: # diagonals
     winner=1
     end=1
 
@@ -157,6 +120,6 @@ while end !=0:
   if winner>=1:
     print("Player", winner, "wins!")
     end = 0
-  else:
+  elif end == 0:
     print("it's a draw.")
 sleep(5)
