@@ -1,5 +1,6 @@
 import turtle as t
-import time
+from time import sleep
+
 t.speed(10)
 player=1
 turn=1
@@ -147,3 +148,4 @@ if winner>=1:
 else:
   print("it's a draw.")
 print(pace[3:6])
+sleep(5)
