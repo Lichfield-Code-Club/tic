@@ -1,3 +1,4 @@
 # tic
 ## Aleks's Noughts and Crosses
-## Refactorised to simplify the main loop
+## Step 1
+### Refactorise main loop
