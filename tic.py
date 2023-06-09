@@ -1,16 +1,6 @@
 import turtle as t
 from time import sleep
 
-t.speed(10)
-player=1
-turn=1
-flip=1
-end=9
-win=0
-place = [10,10,10,10,10,10,10,10,10]
-pace = [1,10,20,30,40,50,60,70,80,90]
-winner =0
-y=0
 def cross():
   t.pendown()
   t.left(45)
@@ -26,137 +16,120 @@ def nought():
   t.left(90)
   t.circle(100)
   t.penup()
-def turn():
-  if flip==0:
-    nought()
-  else:
-    cross()
-#  player*=-1
   
+def Board():
+  #t.shape('circle')
+  t.penup()
+  t.goto(-300,-300)
+  t.pendown()
+  t.goto(300,-300)
+  t.goto(300,300)
+  t.goto(-300,300)
+  t.goto(-300,-300)
+  t.goto(-100,-300)
+  t.left(90)
+  t.forward(600)
+  t.right(90)
+  t.forward(200)
+  t.right(90)
+  t.forward(600)
+  for x in range(2):
+      t.left(90)
+      t.forward(200)
+  t.left(90)
+  t.forward(600)
+  t.right(90)
+  t.forward(200)
+  t.right(90)
+  t.forward(600)
+  t.penup()
+  t.goto(0,0)
+  t.speed(10)
 
-t.shape('circle')
-t.penup()
-t.goto(-300,-300)
-t.pendown()
-t.goto(300,-300)
-t.goto(300,300)
-t.goto(-300,300)
-t.goto(-300,-300)
-t.goto(-100,-300)
-t.left(90)
-t.forward(600)
-t.right(90)
-t.forward(200)
-t.right(90)
-t.forward(600)
-for x in range(2):
-    t.left(90)
-    t.forward(200)
-t.left(90)
-t.forward(600)
-t.right(90)
-t.forward(200)
-t.right(90)
-t.forward(600)
-t.penup()
-t.goto(0,0)
-t.speed(10)
-#cross()
-#t.setx(t.xcor()+200)
+def TileIndex(x,y):
+  global tiles
 
-def play():
-  global pos
-  global end
-  global y
-  if pos == 1 and place[0]==10:
-    t.goto(-200,200)
-    turn()
+  # First row
+  if x >= -300 and x < -100 and y > 100: return 0
+  if x >= -100 and x < 100  and y > 100: return 1
+  if x >=  100 and y > 100: return 2
+
+  # second row
+  if x >= -300 and x < -100 and y < 100 and y > -100: return 3
+  if x >= -300 and x < 100  and y < 100 and y > -100: return 4
+  if x >= 100  and y < 100  and y > -100: return 5
+
+  # third row
+  if x >= -300 and x < -100 and y < 300: return 6
+  if x >= -300 and x < 0 and y < 300: return 7
+  if x >= 100  and y < 300: return 8
+
+  print("Shouldn't reach this point")
+  return 9 # will cause 'list index out of range'
+
+def play(x,y):
+  global tiles
+  global place
+  global player
+
+  tile_index = TileIndex(x,y)
+  if place[tile_index] == 10:
+    t.goto(tiles[tile_index])
+    if player == 0:
+      nought()
+    else:
+      cross()
     t.goto(0,0)
-    place[0]=end%2
-    y+=1
-  elif pos == 2 and place[1]==10:
-    t.goto(0,200)
-    turn()
-    t.goto(0,0)
-    place[1]=end%2
-    y+=1
-  elif pos == 3 and place[2]==10:
-    t.goto(200,200)
-    turn()
-    t.goto(0,0)
-    place[2]=end%2
-    y+=1
-  elif pos == 4 and place[3] ==10:
-    t.goto(-200,0)
-    turn()
-    t.goto(0,0)
-    y+=1
-    place[3]=end%2
-  elif pos == 5 and place[4]==10:
-    t.goto(0,0)
-    turn()
-    t.goto(0,0)
-    y+=1
-    place[4]=end%2
-  elif pos == 6 and place[5]==10:
-    t.goto(200,0)
-    turn()
-    t.goto(0,0)
-    y+=1
-    place[5]=end%2
-  elif pos == 7 and place[6]==10:
-    t.goto(-200,-200)
-    turn()
-    t.goto(0,0)
-    y+=1
-    place[6]=end%2
-  elif pos == 8 and place[7] == 10:
-    t.goto(0,-200)
-    turn()
-    t.goto(0,0)
-    y+=1
-    place[7]=end%2
-  elif pos == 9 and place[8] ==10:
-    t.goto(200,-200)
-    turn()
-    t.goto(0,0)
-    y+=1
-    place[8]=end%2
+    place[tile_index] = player
+    if player: player = 0 # Switch player
+    else: player = 1
   else:
     print("Sorry, I can't do that. ")
-    end+=1
 
-def WinCheck():
+def Checker(player,total):
   global place
   global winner
   global end
   
-  if sum(place[:3])==0 or sum(place[3:6])==0 or sum(place[7:9])==0:
-    winner=2
-    end=2
-  if place[0]+place[3]+place[6]==0 or place[1]+place[4]+place[7]==0  or place[2]+place[5]+place[8]==0 or place[0]+place[4]+place[8]==0 or place[2]+place[4]+place[6]==0:
-    winner=2
-    end=1
-  if sum(place[:3])==3 or sum(place[4:6])==3 or sum(place[7:9])==3:
-    winner=1
-    end=1
-  if place[0]+place[3]+place[6]==3 or place[1]+place[4]+place[7]==3  or place[2]+place[5]+place[8]==3 or place[0]+place[4]+place[8]==3 or place[2]+place[4]+place[6]==3:
-    winner=1
-    end=1
+  if place[0]+place[1]+place[2] == total or place[3]+place[4]+place[5] == total or place[6]+place[7]+place[8] == total: # rows
+    winner=player
+    end=0
+  if place[0]+place[3]+place[6] == total or place[1]+place[4]+place[7] == total or place[2]+place[5]+place[8] == total: # columns
+    winner=player
+    end=0
+  if place[0] + place[4] + place[8] == total or place[2] + place[4] + place[6] == total: # diagonals
+    winner=player
+    end=0
 
-while end !=0:
-  print('1-9')
-  no = input()
-  pos = int(no)
-  if y%2==0:
-    flip=1
-  else:
-    flip =0
-  play()
+def WinCheck():
+  global winner
+  Checker(1,3)
+  if winner != 1:
+    Checker(0,0)
+
+def PlayGame(x,y):
+  global places
+  msg = ''
+  play(x,y)
   WinCheck()
-  if winner>=1:
-    print("Player", winner, "wins!")
-    end = 0
-  else:
-    print("it's a draw.")
-sleep(5)
+  if winner == 1:
+    msg = "Player 1 wins!"
+  elif winner == 0:
+    msg = "Player 2 wins!"
+  elif not 10 in place : # all squares used
+    msg = "it's a draw."
+  if len(msg):
+    t.write(msg, move=False, align='center', font=('Arial', 32, 'normal')) 
+
+t.speed(10)
+player=1
+place = [10,10,10,10,10,10,10,10,10]
+window_height = 900
+window_width = 900
+tiles = [(-200,200),(0,200),(200,200),(-200,0),(0,0),(200,0),(-200,-200),(0,-200),(200,-200)]
+winner = 10
+window = t.Screen()
+window.setup(window_width,window_height)
+window.onclick(PlayGame)
+Board()
+t.mainloop()
